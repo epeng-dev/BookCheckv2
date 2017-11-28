@@ -1,0 +1,25 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/Orange</item>
+        <item name="colorPrimaryDark">@color/Orange</item>
+        <item name="colorAccent">@color/Orange</item>
+    </style>
+
+    <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="LoginAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@color/Orange</item>
+        <item name="android:textColorHint">@color/Iron</item>
+        <item name="android:textColor">@color/White</item>
+    </style>
+    
+    <style name="ProgressDialogTheme" parent="Theme.AppCompat.Dialog">
+        <item name="colorAccent">@color/White</item>
+        <item name="android:background">@color/Orange</item>
+        <item name="android:textColorPrimary">@color/Iron</item>
+    </style>
+</resources>
