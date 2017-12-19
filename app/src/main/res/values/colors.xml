@@ -7,4 +7,5 @@
     <color name="White">#FFFFFF</color>
     <color name="Iron">#CCCCCC</color>
     <color name="OrangeDark">#cc3600</color>
+    <color name="Dark">#000000</color>
 </resources>

@@ -4,10 +4,25 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/search"
-            android:title="책 검색" />
+            android:title="책책"/>
         <item
             android:id="@+id/borrow"
             android:title="대출" />
+
+        <item
+            android:id="@+id/adminLogin"
+            android:title="관리자 로그인"/>
+    </group>
+
+    <group>
+        <item
+            android:id="@+id/logOut"
+            android:title="로그아웃"/>
+    </group>
+
+    <group
+        android:id="@+id/adminfunction"
+        android:visible="false">
         <item
             android:id="@+id/returnbook"
             android:title="반납" />
@@ -15,5 +30,4 @@
             android:id="@+id/registerbbok"
             android:title="책 등록"/>
     </group>
-
 </menu>

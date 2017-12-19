@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,16 +40,14 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         ImageView imageView = (ImageView) findViewById(R.id.SplashImage);
-        final SharedPreferences IDpref = getSharedPreferences("ID", MODE_PRIVATE);
-        final SharedPreferences Tokenpref = getSharedPreferences("Token", MODE_PRIVATE);
-        GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(imageView);
-        Glide.with(this).load(R.raw.splash).into(imageViewTarget);
-        if(IDpref.getString("ID", "")!=""){
+        final SharedPreferences pref = getSharedPreferences("user", MODE_PRIVATE);
+        Glide.with(this).load(R.raw.splash).into(imageView);
+        if(pref.getString("ID", "")!=""){
             new AsyncTask<Void, Void, Void>(){
                 @Override
                 protected Void doInBackground(Void... params) {
-                    ID = IDpref.getString("ID", "");
-                    Token = Tokenpref.getString("Password", "");
+                    ID = pref.getString("ID", "");
+                    Token = pref.getString("Token", "");
                     return null;
                 }
 

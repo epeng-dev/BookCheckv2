@@ -4,8 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,8 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,53 +25,36 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class LoginActivity extends AppCompatActivity {
-	Button bLogin;
-	private String usertoken = "";
-	SharedPreferences pref;
-	ProgressDialog progressDialog;
+public class RegisterActivity extends AppCompatActivity {
+	EditText etId;
+	EditText etPw;
 	TextView errorText;
+	Button button;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_login);
-		this.overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_translate_right);
+		setContentView(R.layout.activity_register);
 
-		final EditText etID = (EditText) findViewById(R.id.etID);
-		final EditText etPW = (EditText) findViewById(R.id.etPW);
-		bLogin = (Button) findViewById(R.id.login);
-		TextView textView = (TextView) findViewById(R.id.textView);
+		etId = (EditText) findViewById(R.id.etID);
+		etPw = (EditText) findViewById(R.id.etPW);
 		errorText = (TextView) findViewById(R.id.errorText);
-		pref = getSharedPreferences("user", MODE_PRIVATE);
+		button = (Button) findViewById(R.id.register);
 
-		bLogin.setOnClickListener(new View.OnClickListener() {
+		button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				bLogin.setEnabled(false);
-				String ID = etID.getText().toString();
-				String PW = etPW.getText().toString();
+				button.setEnabled(false);
+				String ID = etId.getText().toString();
+				String PW = etPw.getText().toString();
 				if(validate(ID, PW)){
 					errorText.setText("ID나 PW를 정확히 입력해주십시오.");
-					bLogin.setEnabled(true);
+					button.setEnabled(true);
 					return;
 				}
-				login(ID, PW);
-			}
-		});
-
-		textView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-				startActivity(intent);
+				register(ID, PW);
 			}
 		});
 	}
-
-	private void login(final String ID, final String PW){
-		new LoginTask().execute(ID, PW);
-	}
-
 
 	private boolean validate(String ID, String PW){
 		if(ID.isEmpty() || PW.isEmpty()){
@@ -84,21 +63,19 @@ public class LoginActivity extends AppCompatActivity {
 		return false;
 	}
 
-	@Override
-	public void finish() {
-		super.finish();
-		this.overridePendingTransition(R.anim.anim_stop, R.anim.anim_translate_right);
+	private void register(String id, String pw){
+		new RegisterTask().execute(id, pw);
 	}
 
-	private class LoginTask extends AsyncTask<String, Void, String> {
-		ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this, R.style.ProgressDialogTheme);
+	private class RegisterTask extends AsyncTask<String, Void, String> {
+		ProgressDialog progressDialog = new ProgressDialog(RegisterActivity.this, R.style.ProgressDialogTheme);
 		String ID = null;
 		String PW = null;
 		int requestCode = 0;
 		@Override
 		protected String doInBackground(String... strings) {
 			String rawString = "";
-			String urlString = "";
+			String urlString = "http://52.79.134.200:3004/signup";
 			ID = strings[0];
 			PW = strings[1];
 			HttpURLConnection connection = null;
@@ -146,28 +123,11 @@ public class LoginActivity extends AppCompatActivity {
 
 		@Override
 		protected void onPostExecute(String result) {
-			if (requestCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-				errorText.setText("ID나 Password가 올바르지 않습니다");
-				bLogin.setEnabled(true);
+			if (requestCode == HttpURLConnection.HTTP_CREATED) {
+				Toast.makeText(RegisterActivity.this, "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
+				onBackPressed();
 			} else {
-				try {
-					Log.d("resultString", result);
-					JSONObject jsonObject = new JSONObject(result);
-					String userToken = jsonObject.getString("access_token");
-					SharedPreferences.Editor editor = pref.edit();
-					editor.putString("ID", ID);
-					editor.putString("Token", userToken);
-					editor.apply();
-					editor.commit();
-					Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-					intent.putExtra("ID", ID);
-					intent.putExtra("Token", userToken);
-					startActivity(intent);
-					finish();
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-				bLogin.setEnabled(true);
+				Toast.makeText(RegisterActivity.this, "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
 			}
 			super.onPostExecute(result);
 			progressDialog.dismiss();
@@ -181,5 +141,4 @@ public class LoginActivity extends AppCompatActivity {
 			super.onPreExecute();
 		}
 	}
-
 }

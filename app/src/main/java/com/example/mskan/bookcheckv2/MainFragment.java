@@ -14,7 +14,7 @@ import android.webkit.WebViewClient;
 
 public class MainFragment extends Fragment {
     WebView webView;
-    String url = "";
+    String url = "http://www.google.com";
     public MainFragment() {
     }
 
