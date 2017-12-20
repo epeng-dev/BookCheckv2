@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
 		@Override
 		protected String doInBackground(String... strings) {
 			String rawString = "";
-			String urlString = "";
+			String urlString = "http://52.79.134.200:3004/auth/common";
 			ID = strings[0];
 			PW = strings[1];
 			HttpURLConnection connection = null;

@@ -10,11 +10,13 @@ public class CardViewItem {
     public String Title;
     public Integer Iconimage;
     public String URL;
+    public String mode;
     public Class Nextclass;
-    public CardViewItem(String title, Integer image, String url, Class nextclass){
+    public CardViewItem(String title, Integer image, String url, String mode, Class nextclass){
         this.Title = title;
         this.Iconimage = image;
         this.URL = url;
+        this.mode = mode;
         this.Nextclass = nextclass;
     }
 

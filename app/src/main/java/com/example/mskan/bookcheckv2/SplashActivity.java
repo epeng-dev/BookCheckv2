@@ -42,32 +42,38 @@ public class SplashActivity extends AppCompatActivity {
         ImageView imageView = (ImageView) findViewById(R.id.SplashImage);
         final SharedPreferences pref = getSharedPreferences("user", MODE_PRIVATE);
         Glide.with(this).load(R.raw.splash).into(imageView);
+        Handler handler = new Handler();
         if(pref.getString("ID", "")!=""){
-            new AsyncTask<Void, Void, Void>(){
+            handler.postDelayed(new Runnable() {
                 @Override
-                protected Void doInBackground(Void... params) {
-                    ID = pref.getString("ID", "");
-                    Token = pref.getString("Token", "");
-                    return null;
-                }
+                public void run() {
+                    new AsyncTask<Void, Void, Void>(){
+                        @Override
+                        protected Void doInBackground(Void... params) {
+                            ID = pref.getString("ID", "");
+                            Token = pref.getString("Token", "");
+                            return null;
+                        }
 
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                }
+                        @Override
+                        protected void onPreExecute() {
+                            super.onPreExecute();
+                        }
 
-                @Override
-                protected void onPostExecute(Void aVoid) {
-					Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-					intent.putExtra("ID", ID);
-					intent.putExtra("Token", Token);
-					startActivity(intent);
-					finish();
-				}
-            }.execute();
+                        @Override
+                        protected void onPostExecute(Void aVoid) {
+                            finish();
+                            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                            intent.putExtra("ID", ID);
+                            intent.putExtra("Token", Token);
+                            startActivity(intent);
+                        }
+                    }.execute();
+                }
+            }, 7800);
+
         }
         else {
-            Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {

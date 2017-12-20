@@ -23,15 +23,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
+
+import static android.os.Build.ID;
 
 public class RFIDActivity extends AppCompatActivity {
 	private NfcAdapter nfcAdapter;
 	PendingIntent pendingIntent;
 	String hex;
 	String UUID="";
-	String Json;
+	String mode;
 	private String userToken;
 	private String URL;
 	TextView textView;
@@ -44,6 +49,7 @@ public class RFIDActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_rfid);
 		userToken = getIntent().getStringExtra("UserToken");
 		URL = getIntent().getStringExtra("URL");
+		mode = getIntent().getStringExtra("mode");
 		textView = (TextView) findViewById(R.id.RFIDtext);
 		imageView = (ImageView) findViewById(R.id.RFIDImage);
 		nfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -84,38 +90,29 @@ public class RFIDActivity extends AppCompatActivity {
 	protected void onNewIntent(Intent intent){
 		super.onNewIntent(intent);
 		tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-
-		new HttpTask().execute(URL, userToken, UUID);
+		if (mode.equals("borrow"))
+			new BorrowTask().execute(URL, userToken);
 	}
 
-	private class HttpTask extends AsyncTask<String, Void, String>{
+	private class BorrowTask extends AsyncTask<String, Void, String>{
 		int requestCode = 0;
 		@Override
 		protected String doInBackground(String... strings) {
 			String rawString = "";
 			String urlString = strings[0];
 			String token = strings[1];
-			String uuid = strings[2];
 			HttpURLConnection connection = null;
 			try {
-				URL url = new URL(urlString);
+				StringBuilder stringBuffer = new StringBuilder(urlString);
+				stringBuffer.append("?rfid").append("=").append(UUID);
+
+				URL url = new URL(stringBuffer.toString());
 				connection = (HttpURLConnection) url.openConnection();
 				connection.setRequestMethod("GET");
+				connection.setRequestProperty("Authorization", "JWT " + token);
 				connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 				connection.setDoInput(true);
-				connection.setDoOutput(true);
-
-				StringBuilder stringBuffer = new StringBuilder();
-				stringBuffer.append("Authorization").append("=").append(token).append("&");
-				stringBuffer.append("rfid").append("=").append(uuid);
-
-				OutputStream outputStream = connection.getOutputStream();
-				BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-				bufferedWriter.write(stringBuffer.toString());
-				Log.d("stringbuffer", stringBuffer.toString());
-				bufferedWriter.flush();
-				bufferedWriter.close();
-				outputStream.close();
+				connection.setDoOutput(false);
 
 				StringBuilder responseStringBuilder = new StringBuilder();
 				if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -178,6 +175,5 @@ public class RFIDActivity extends AppCompatActivity {
 			super.onPreExecute();
 		}
 	}
-
 }
 

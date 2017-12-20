@@ -46,9 +46,9 @@ public class ReturnBookFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         String URL = "";
         items = new ArrayList<CardViewItem>();
-        items.add(new CardViewItem("바코드 반납", R.mipmap.ic_launcher, "returnbook_url", BarcodeActivity.class));
-        items.add(new CardViewItem("RFID 반납", R.mipmap.ic_launcher, "returnbook_url", RFIDActivity.class));
-        adapter = new CardViewAdapter(getContext(), items, requestManager, UserID, UserToken);
+        items.add(new CardViewItem("바코드 반납", R.mipmap.ic_launcher, "http://52.79.134.200:3004/borrow", "return", BarcodeActivity.class));
+        items.add(new CardViewItem("RFID 반납", R.mipmap.ic_launcher, "http://52.79.134.200:3004/borrow", "return", RFIDActivity.class));
+        adapter = new CardViewAdapter(getContext(), items, requestManager, UserToken);
         recyclerView.setAdapter(adapter);
         return view;
     }

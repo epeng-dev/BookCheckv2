@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = null;
         String title = getString(R.string.app_name);
         Bundle bundle;
+
         if(id == R.id.search){
             fragment = mainFragment;
             title = "책첵";

@@ -44,9 +44,9 @@ public class RegisterBookFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         String URL = "http://esplay.xyz:21221/";
         items = new ArrayList<CardViewItem>();
-        items.add(new CardViewItem("바코드 책 등록", R.mipmap.ic_launcher, "registerbook_url", BarcodeActivity.class));
-        items.add(new CardViewItem("RFID 책 등록", R.mipmap.ic_launcher, "registerbook_url", RFIDActivity.class));
-        adapter = new CardViewAdapter(getContext(), items, requestManager, UserID, UserToken);
+        items.add(new CardViewItem("바코드 책 등록", R.mipmap.ic_launcher, "http://52.79.134.200:3004/book", "register", BarcodeActivity.class));
+        items.add(new CardViewItem("RFID 책 등록", R.mipmap.ic_launcher, "http://52.79.134.200:3004/book", "register", RFIDActivity.class));
+        adapter = new CardViewAdapter(getContext(), items, requestManager, UserToken);
         recyclerView.setAdapter(adapter);
         return view;
     }

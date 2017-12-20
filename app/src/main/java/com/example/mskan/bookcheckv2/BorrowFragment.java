@@ -20,7 +20,7 @@ public class BorrowFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<CardViewItem> items;
     public RequestManager requestManager;
-    private String UserID, UserToken;
+    private String UserToken;
     public BorrowFragment() {
         // Required empty public constructor
     }
@@ -30,7 +30,6 @@ public class BorrowFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            UserID = getArguments().getString("UserID");
             UserToken = getArguments().getString("UserToken");
         }
     }
@@ -46,9 +45,9 @@ public class BorrowFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         items = new ArrayList<CardViewItem>();
-        items.add(new CardViewItem("바코드 대출", R.mipmap.ic_launcher, "borrow_url", BarcodeActivity.class));
-        items.add(new CardViewItem("RFID 대출", R.mipmap.ic_launcher, "borrow_url", RFIDActivity.class));
-        adapter = new CardViewAdapter(getContext(), items, requestManager, UserID, UserToken);
+        items.add(new CardViewItem("바코드 대출", R.mipmap.ic_launcher, "http://52.79.134.200:3004/borrow", "borrow", BarcodeActivity.class));
+        items.add(new CardViewItem("RFID 대출", R.mipmap.ic_launcher, "http://52.79.134.200:3004/borrow", "borrow", RFIDActivity.class));
+        adapter = new CardViewAdapter(getContext(), items, requestManager, UserToken);
 		recyclerView.setAdapter(adapter);
         return view;
     }

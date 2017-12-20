@@ -25,7 +25,6 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.ViewHo
     private RequestManager glide;
     private Context Listcontext;
     private String libraries;
-    private String UserID;
     private String UserToken;
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView Icon;
@@ -39,11 +38,10 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.ViewHo
         }
     }
 
-    public CardViewAdapter(Context context, ArrayList<CardViewItem> itemset, RequestManager requestManager, String ID, String Token){
+    public CardViewAdapter(Context context, ArrayList<CardViewItem> itemset, RequestManager requestManager, String Token){
         this.Listcontext = context;
         this.Itemset = itemset;
         this.glide = requestManager;
-        this.UserID = ID;
         this.UserToken = Token;
     }
 
@@ -56,15 +54,14 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.ViewHo
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position){
         holder.Title.setText(Itemset.get(position).Title);
-        glide.load(Itemset.get(position).Iconimage).into(holder.Icon);
         holder.Cardview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 			Intent intent = new Intent(Listcontext, Itemset.get(position).Nextclass);
-                intent.putExtra("UserID", UserID);
-                intent.putExtra("UserToken", UserToken);
-                intent.putExtra("URL", Itemset.get(position).URL);
-                intent.putExtra("Title", Itemset.get(position).Title);
+            intent.putExtra("mode", Itemset.get(position).mode);
+            intent.putExtra("UserToken", UserToken);
+            intent.putExtra("URL", Itemset.get(position).URL);
+            intent.putExtra("Title", Itemset.get(position).Title);
 			Listcontext.startActivity(intent);
             }
         });
