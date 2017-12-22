@@ -35,7 +35,7 @@ public class RFIDActivity extends AppCompatActivity {
 	private NfcAdapter nfcAdapter;
 	PendingIntent pendingIntent;
 	String hex;
-	String UUID="";
+	String UUID = "";
 	String mode;
 	private String userToken;
 	private String URL;
@@ -43,6 +43,7 @@ public class RFIDActivity extends AppCompatActivity {
 	ImageView imageView;
 	String library;
 	Tag tag;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,12 +56,12 @@ public class RFIDActivity extends AppCompatActivity {
 		nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 		library = getIntent().getStringExtra("Libraries");
 
-		if(nfcAdapter == null){
+		if (nfcAdapter == null) {
 			Toast.makeText(this, "NFC가 지원되지 않는 기기입니다. 사용에 불편을 드려 죄송합니다.", Toast.LENGTH_SHORT).show();
 			finish();
 		}
 
-		if(!nfcAdapter.isEnabled()) {
+		if (!nfcAdapter.isEnabled()) {
 			Toast.makeText(this, "이 서비스는 NFC기능이 필요한 서비스입니다.", Toast.LENGTH_SHORT).show();
 			Intent i = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
 			startActivity(i);
@@ -71,31 +72,32 @@ public class RFIDActivity extends AppCompatActivity {
 	}
 
 	@Override
-	protected void onResume(){
+	protected void onResume() {
 		super.onResume();
-		if(nfcAdapter != null){
+		if (nfcAdapter != null) {
 			nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
 		}
 	}
 
 	@Override
-	protected void onPause(){
-		if(nfcAdapter != null){
+	protected void onPause() {
+		if (nfcAdapter != null) {
 			nfcAdapter.disableForegroundDispatch(this);
 		}
 		super.onPause();
 	}
 
 	@Override
-	protected void onNewIntent(Intent intent){
+	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 		if (mode.equals("borrow"))
 			new BorrowTask().execute(URL, userToken);
 	}
 
-	private class BorrowTask extends AsyncTask<String, Void, String>{
+	private class BorrowTask extends AsyncTask<String, Void, String> {
 		int requestCode = 0;
+
 		@Override
 		protected String doInBackground(String... strings) {
 			String rawString = "";
@@ -138,7 +140,7 @@ public class RFIDActivity extends AppCompatActivity {
 
 		@Override
 		protected void onPostExecute(String result) {
-			switch (requestCode){
+			switch (requestCode) {
 				case HttpURLConnection.HTTP_OK:
 					textView.setText("대출이 완료되었습니다.");
 					imageView.setImageResource(R.drawable.success);

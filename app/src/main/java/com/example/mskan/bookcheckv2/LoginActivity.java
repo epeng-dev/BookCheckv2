@@ -32,15 +32,18 @@ import java.net.URL;
 public class LoginActivity extends AppCompatActivity {
 	Button bLogin;
 	private String usertoken = "";
-	SharedPreferences pref;
+
 	ProgressDialog progressDialog;
 	TextView errorText;
+
+	private SharedPreferences pref;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		this.overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_translate_right);
-
+		pref = getSharedPreferences("user", MODE_PRIVATE);
 		final EditText etID = (EditText) findViewById(R.id.etID);
 		final EditText etPW = (EditText) findViewById(R.id.etPW);
 		bLogin = (Button) findViewById(R.id.login);
@@ -54,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
 				bLogin.setEnabled(false);
 				String ID = etID.getText().toString();
 				String PW = etPW.getText().toString();
-				if(validate(ID, PW)){
+				if (validate(ID, PW)) {
 					errorText.setText("ID나 PW를 정확히 입력해주십시오.");
 					bLogin.setEnabled(true);
 					return;
@@ -72,13 +75,18 @@ public class LoginActivity extends AppCompatActivity {
 		});
 	}
 
-	private void login(final String ID, final String PW){
+	private void login(final String ID, final String PW) {
 		new LoginTask().execute(ID, PW);
 	}
 
+	@Override
+	public void onBackPressed() {
+		finishAffinity();
+		super.onBackPressed();
+	}
 
-	private boolean validate(String ID, String PW){
-		if(ID.isEmpty() || PW.isEmpty()){
+	private boolean validate(String ID, String PW) {
+		if (ID.isEmpty() || PW.isEmpty()) {
 			return true;
 		}
 		return false;
@@ -95,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
 		String ID = null;
 		String PW = null;
 		int requestCode = 0;
+
 		@Override
 		protected String doInBackground(String... strings) {
 			String rawString = "";
@@ -158,11 +167,6 @@ public class LoginActivity extends AppCompatActivity {
 					editor.putString("ID", ID);
 					editor.putString("Token", userToken);
 					editor.apply();
-					editor.commit();
-					Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-					intent.putExtra("ID", ID);
-					intent.putExtra("Token", userToken);
-					startActivity(intent);
 					finish();
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -180,6 +184,7 @@ public class LoginActivity extends AppCompatActivity {
 			progressDialog.show();
 			super.onPreExecute();
 		}
+
 	}
 
 }

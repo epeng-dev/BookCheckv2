@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,48 +24,51 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class RegisterActivity extends AppCompatActivity {
-	EditText etId;
-	EditText etPw;
+public class AdminLoginActivity extends AppCompatActivity {
+	Button bLogin;
 	TextView errorText;
-	Button button;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_register);
+		setContentView(R.layout.activity_admin_login);
+		this.overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_translate_right);
 
-		etId = (EditText) findViewById(R.id.etID);
-		etPw = (EditText) findViewById(R.id.etPW);
+		final EditText etID = (EditText) findViewById(R.id.etID);
+		final EditText etPW = (EditText) findViewById(R.id.etPW);
+		bLogin = (Button) findViewById(R.id.login);
 		errorText = (TextView) findViewById(R.id.errorText);
-		button = (Button) findViewById(R.id.register);
 
-		button.setOnClickListener(new View.OnClickListener() {
+		bLogin.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				button.setEnabled(false);
-				String ID = etId.getText().toString();
-				String PW = etPw.getText().toString();
+				bLogin.setEnabled(false);
+				String ID = etID.getText().toString();
+				String PW = etPW.getText().toString();
 				if (validate(ID, PW)) {
 					errorText.setText("ID나 PW를 정확히 입력해주십시오.");
-					button.setEnabled(true);
+					bLogin.setEnabled(true);
 					return;
 				}
-				register(ID, PW);
+				login(ID, PW);
 			}
 		});
+
+	}
+
+	private void login(final String ID, final String PW) {
+		new LoginTask().execute(ID, PW);
 	}
 
 	private boolean validate(String ID, String PW) {
-		return ID.isEmpty() || PW.isEmpty();
+		if (ID.isEmpty() || PW.isEmpty()) {
+			return true;
+		}
+		return false;
 	}
 
-	private void register(String id, String pw) {
-		new RegisterTask().execute(id, pw);
-	}
-
-	private class RegisterTask extends AsyncTask<String, Void, String> {
-		ProgressDialog progressDialog = new ProgressDialog(RegisterActivity.this, R.style.ProgressDialogTheme);
+	private class LoginTask extends AsyncTask<String, Void, String> {
+		ProgressDialog progressDialog = new ProgressDialog(AdminLoginActivity.this, R.style.ProgressDialogTheme);
 		String ID = null;
 		String PW = null;
 		int requestCode = 0;
@@ -74,7 +76,7 @@ public class RegisterActivity extends AppCompatActivity {
 		@Override
 		protected String doInBackground(String... strings) {
 			String rawString = "";
-			String urlString = "http://52.79.134.200:3004/signup";
+			String urlString = "http://52.79.134.200:3004/auth/admin";
 			ID = strings[0];
 			PW = strings[1];
 			HttpURLConnection connection = null;
@@ -122,11 +124,24 @@ public class RegisterActivity extends AppCompatActivity {
 
 		@Override
 		protected void onPostExecute(String result) {
-			if (requestCode == HttpURLConnection.HTTP_CREATED) {
-				Toast.makeText(RegisterActivity.this, "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
-				onBackPressed();
+			if (requestCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+				errorText.setText("ID나 Password가 올바르지 않습니다");
+				bLogin.setEnabled(true);
 			} else {
-				Toast.makeText(RegisterActivity.this, "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
+				try {
+					Log.d("resultString", result);
+					JSONObject jsonObject = new JSONObject(result);
+					String userToken = jsonObject.getString("access_token");
+					Intent intent = new Intent();
+					intent.putExtra("Token", userToken);
+					intent.putExtra("ID", ID);
+					intent.putExtra("isAdmin", false);
+					setResult(1, intent);
+					finish();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				bLogin.setEnabled(true);
 			}
 			super.onPostExecute(result);
 			progressDialog.dismiss();
@@ -139,5 +154,6 @@ public class RegisterActivity extends AppCompatActivity {
 			progressDialog.show();
 			super.onPreExecute();
 		}
+
 	}
 }

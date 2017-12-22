@@ -7,25 +7,24 @@
             android:title="책책"/>
         <item
             android:id="@+id/borrow"
-            android:title="대출" />
-
-        <item
-            android:id="@+id/adminLogin"
-            android:title="관리자 로그인"/>
+            android:title="대출"/>
     </group>
 
-    <group>
-        <item
-            android:id="@+id/logOut"
-            android:title="로그아웃"/>
-    </group>
+    <item
+        android:id="@+id/adminLogin"
+        android:title="관리자 로그인"/>
+
+    <item
+        android:id="@+id/logOut"
+        android:title="로그아웃"/>
+
 
     <group
         android:id="@+id/adminfunction"
         android:visible="false">
         <item
             android:id="@+id/returnbook"
-            android:title="반납" />
+            android:title="책 반납"/>
         <item
             android:id="@+id/registerbbok"
             android:title="책 등록"/>

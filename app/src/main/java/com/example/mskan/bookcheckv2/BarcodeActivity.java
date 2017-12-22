@@ -30,6 +30,7 @@ public class BarcodeActivity extends AppCompatActivity {
 	private String UserID;
 	private String UserToken;
 	private String Title;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,18 +53,17 @@ public class BarcodeActivity extends AppCompatActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		final IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-		if(result != null){
-			if(result.getContents() == null){
+		if (result != null) {
+			if (result.getContents() == null) {
 				Toast.makeText(this, "스캔을 취소하셨습니다.", Toast.LENGTH_SHORT).show();
 				finish();
-			}
-			else {
-				Thread thread = new Thread(){
+			} else {
+				Thread thread = new Thread() {
 					@Override
-					public void run(){
+					public void run() {
 						String urlString = URL;
 
-						try{
+						try {
 							URL url = new URL(urlString);
 
 							HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -86,11 +86,11 @@ public class BarcodeActivity extends AppCompatActivity {
 							connection.connect();
 
 							StringBuilder responseStringBuilder = new StringBuilder();
-							if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
+							if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 								BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-								for(;;){
+								for (; ; ) {
 									String stringline = bufferedReader.readLine();
-									if(stringline == null) break;
+									if (stringline == null) break;
 									responseStringBuilder.append(stringline).append('\n');
 								}
 								bufferedReader.close();
@@ -98,7 +98,7 @@ public class BarcodeActivity extends AppCompatActivity {
 
 							connection.disconnect();
 							Json = responseStringBuilder.toString();
-						} catch (IOException e){
+						} catch (IOException e) {
 							e.printStackTrace();
 						}
 					}
@@ -117,17 +117,15 @@ public class BarcodeActivity extends AppCompatActivity {
 					e.printStackTrace();
 				}
 
-				if(Boolean.getBoolean(success)){
+				if (Boolean.getBoolean(success)) {
 					imageView.setImageResource(R.drawable.success);
-					textView.setText(Title  +"이 완료되었습니다.");
-				}
-				else{
+					textView.setText(Title + "이 완료되었습니다.");
+				} else {
 					imageView.setImageResource(R.drawable.warning);
 					textView.setText(Title + "도중 오류가 발생하였습니다.");
 				}
 			}
-		}
-		else{
+		} else {
 			super.onActivityResult(requestCode, resultCode, data);
 		}
 	}
