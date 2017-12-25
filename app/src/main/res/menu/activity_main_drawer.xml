@@ -26,7 +26,7 @@
             android:id="@+id/returnbook"
             android:title="책 반납"/>
         <item
-            android:id="@+id/registerbbok"
+            android:id="@+id/registerbook"
             android:title="책 등록"/>
     </group>
 </menu>

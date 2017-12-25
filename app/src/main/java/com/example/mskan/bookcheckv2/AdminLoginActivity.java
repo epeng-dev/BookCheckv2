@@ -135,7 +135,7 @@ public class AdminLoginActivity extends AppCompatActivity {
 					Intent intent = new Intent();
 					intent.putExtra("Token", userToken);
 					intent.putExtra("ID", ID);
-					intent.putExtra("isAdmin", false);
+					intent.putExtra("isAdmin", true);
 					setResult(1, intent);
 					finish();
 				} catch (JSONException e) {

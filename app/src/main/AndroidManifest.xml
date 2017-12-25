@@ -42,6 +42,8 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name=".AdminLoginActivity">
         </activity>
+        <activity android:name=".RegisterBookActivity">
+        </activity>
     </application>
 
 </manifest>

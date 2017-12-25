@@ -24,7 +24,8 @@ public class MainActivity extends AppCompatActivity
 	MainFragment mainFragment = new MainFragment();
 	BorrowFragment borrowFragment = null;
 	ReturnBookFragment returnBookFragment = null;
-
+	RegisterBookFragment
+			registerBookFragment = null;
 	TextView userName;
 	TextView userGrade;
 	NavigationView navigationView;
@@ -81,16 +82,18 @@ public class MainActivity extends AppCompatActivity
 
 	@Override
 	protected void onRestart() {
-		pref = getSharedPreferences("user", MODE_PRIVATE);
-		UserID = pref.getString("ID", "");
-		UserToken = pref.getString("Token", "");
-		userName.setText(UserID);
 		if (isAdmin){
+			userName.setText(UserID);
 			userGrade.setText("도서관 관리자");
 			navigationView.getMenu().setGroupVisible(R.id.adminfunction, true);
 		}
-		else
+		else {
+			pref = getSharedPreferences("user", MODE_PRIVATE);
+			UserID = pref.getString("ID", "");
+			UserToken = pref.getString("Token", "");
+			userName.setText(UserID);
 			userGrade.setText("일반사용자");
+		}
 		super.onRestart();
 	}
 
@@ -114,7 +117,7 @@ public class MainActivity extends AppCompatActivity
 				borrowFragment.setArguments(bundle);
 			}
 			fragment = borrowFragment;
-			title = "대출";
+			title = "책 대출";
 		} else if (id == R.id.returnbook) {
 			if (returnBookFragment == null) {
 				returnBookFragment = new ReturnBookFragment();
@@ -123,7 +126,16 @@ public class MainActivity extends AppCompatActivity
 				returnBookFragment.setArguments(bundle);
 			}
 			fragment = returnBookFragment;
-			title = "반납";
+			title = "책 반납";
+		} else if (id == R.id.registerbook){
+			if(registerBookFragment == null){
+				registerBookFragment = new RegisterBookFragment();
+				bundle = new Bundle();
+				bundle.putString("UserToken", UserToken);
+				registerBookFragment.setArguments(bundle);
+			}
+			fragment = registerBookFragment;
+			title = "책 등록";
 		} else if (id == R.id.logOut) {
 			SharedPreferences pref = getSharedPreferences("user", MODE_PRIVATE);
 			SharedPreferences.Editor editor = pref.edit();

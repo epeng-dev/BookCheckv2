@@ -25,7 +25,7 @@
         android:layout_height="0dp"
         android:layout_weight="0.5"
         android:layout_marginTop="50dp"
-        android:text="책의 RFID 태그를 스마트폰의 뒷면에 대어주세요 \n\n책이 자동으로 대출됩니다."
+        android:text="책의 RFID 태그를 스마트폰의 뒷면에 붙여주세요 \n\n책이 자동으로 대출됩니다."
         android:textSize="30sp"/>
 
 </LinearLayout>

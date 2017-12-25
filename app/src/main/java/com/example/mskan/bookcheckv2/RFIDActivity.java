@@ -67,6 +67,10 @@ public class RFIDActivity extends AppCompatActivity {
 			startActivity(i);
 		}
 
+		if (mode.equals("register")){
+			textView.setText("등록할 RFID칩을 스마트폰 뒤에 붙여주세요");
+		}
+
 		Intent intent = new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 	}
@@ -93,6 +97,15 @@ public class RFIDActivity extends AppCompatActivity {
 		tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 		if (mode.equals("borrow"))
 			new BorrowTask().execute(URL, userToken);
+		else if (mode.equals("register")){
+			Intent newIntent = new Intent(RFIDActivity.this, RegisterBookActivity.class);
+			newIntent.putExtra("UUID", UUID);
+			newIntent.putExtra("Token", userToken);
+			startActivity(newIntent);
+		}
+		else if (mode.equals("return"))
+			new ReturnTask().execute(URL, userToken);
+
 	}
 
 	private class BorrowTask extends AsyncTask<String, Void, String> {
@@ -152,6 +165,103 @@ public class RFIDActivity extends AppCompatActivity {
 				case 208:
 					textView.setText("대출이 불가능한 책입니다.");
 					imageView.setImageResource(R.drawable.warning);
+			}
+
+			super.onPostExecute(result);
+		}
+
+		@Override
+		protected void onPreExecute() {
+			if (tag != null) {
+				byte[] tagID = tag.getId();
+				for (int i = 0; i < 4; i++) {
+					if ((tagID[i] & 0xFF) < (byte) 16) {
+						hex = "0" + Integer.toHexString(tagID[i] & 0xFF) + "_";
+					} else {
+						hex = Integer.toHexString(tagID[i] & 0xFF) + "_";
+					}
+
+					UUID += hex;
+				}
+			}
+
+			UUID = UUID.substring(0, UUID.length() - 1);
+			UUID = UUID.toUpperCase();
+			super.onPreExecute();
+		}
+	}
+
+
+	private class ReturnTask extends AsyncTask<String, Void, String> {
+		int requestCode = 0;
+
+		@Override
+		protected String doInBackground(String... strings) {
+			String rawString = "";
+			String urlString = strings[0];
+			String token = strings[1];
+			HttpURLConnection connection = null;
+			try {
+				URL url = new URL(urlString);
+				connection = (HttpURLConnection) url.openConnection();
+				connection.setRequestMethod("POST");
+				connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+				connection.setDoInput(true);
+				connection.setDoOutput(true);
+
+				StringBuilder stringBuffer = new StringBuilder();
+				stringBuffer.append("Authorization").append("=").append(token).append("&");
+				stringBuffer.append("rfid").append("=").append(UUID);
+
+				OutputStream outputStream = connection.getOutputStream();
+				BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+				bufferedWriter.write(stringBuffer.toString());
+				Log.d("stringbuffer", stringBuffer.toString());
+				bufferedWriter.flush();
+				bufferedWriter.close();
+				outputStream.close();
+
+				StringBuilder responseStringBuilder = new StringBuilder();
+				if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+					while (true) {
+						String stringline = bufferedReader.readLine();
+						if (stringline == null) break;
+						responseStringBuilder.append(stringline).append('\n');
+					}
+					bufferedReader.close();
+				}
+				requestCode = connection.getResponseCode();
+				connection.disconnect();
+				rawString = responseStringBuilder.toString();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if (connection != null)
+					connection.disconnect();
+			}
+			return rawString;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			switch (requestCode) {
+				case HttpURLConnection.HTTP_OK:
+					textView.setText("반납이 완료되었습니다.");
+					imageView.setImageResource(R.drawable.success);
+					break;
+				case HttpURLConnection.HTTP_NO_CONTENT:
+					textView.setText("존재하지 않는 RFID입니다!");
+					imageView.setImageResource(R.drawable.warning);
+					break;
+				case 208:
+					textView.setText("이미 반납되어 반납불가인 책입니다.");
+					imageView.setImageResource(R.drawable.warning);
+					break;
+				case 403:
+					textView.setText("다른 도서관의 책이거나 권한이 없습니다.");
+					imageView.setImageResource(R.drawable.warning);
+					break;
 			}
 
 			super.onPostExecute(result);
