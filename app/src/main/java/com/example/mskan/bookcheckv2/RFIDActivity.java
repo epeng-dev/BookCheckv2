@@ -98,6 +98,7 @@ public class RFIDActivity extends AppCompatActivity {
 		if (mode.equals("borrow"))
 			new BorrowTask().execute(URL, userToken);
 		else if (mode.equals("register")){
+			makeUUID();
 			Intent newIntent = new Intent(RFIDActivity.this, RegisterBookActivity.class);
 			newIntent.putExtra("UUID", UUID);
 			newIntent.putExtra("Token", userToken);
@@ -172,21 +173,7 @@ public class RFIDActivity extends AppCompatActivity {
 
 		@Override
 		protected void onPreExecute() {
-			if (tag != null) {
-				byte[] tagID = tag.getId();
-				for (int i = 0; i < 4; i++) {
-					if ((tagID[i] & 0xFF) < (byte) 16) {
-						hex = "0" + Integer.toHexString(tagID[i] & 0xFF) + "_";
-					} else {
-						hex = Integer.toHexString(tagID[i] & 0xFF) + "_";
-					}
-
-					UUID += hex;
-				}
-			}
-
-			UUID = UUID.substring(0, UUID.length() - 1);
-			UUID = UUID.toUpperCase();
+			makeUUID();
 			super.onPreExecute();
 		}
 	}
@@ -269,23 +256,27 @@ public class RFIDActivity extends AppCompatActivity {
 
 		@Override
 		protected void onPreExecute() {
-			if (tag != null) {
-				byte[] tagID = tag.getId();
-				for (int i = 0; i < 4; i++) {
-					if ((tagID[i] & 0xFF) < (byte) 16) {
-						hex = "0" + Integer.toHexString(tagID[i] & 0xFF) + "_";
-					} else {
-						hex = Integer.toHexString(tagID[i] & 0xFF) + "_";
-					}
-
-					UUID += hex;
-				}
-			}
-
-			UUID = UUID.substring(0, UUID.length() - 1);
-			UUID = UUID.toUpperCase();
+			makeUUID();
 			super.onPreExecute();
 		}
+	}
+
+	private void makeUUID(){
+		if (tag != null) {
+			byte[] tagID = tag.getId();
+			for (int i = 0; i < 4; i++) {
+				if ((tagID[i] & 0xFF) < (byte) 16) {
+					hex = "0" + Integer.toHexString(tagID[i] & 0xFF) + "_";
+				} else {
+					hex = Integer.toHexString(tagID[i] & 0xFF) + "_";
+				}
+
+				UUID += hex;
+			}
+		}
+
+		UUID = UUID.substring(0, UUID.length() - 1);
+		UUID = UUID.toUpperCase();
 	}
 }
 
