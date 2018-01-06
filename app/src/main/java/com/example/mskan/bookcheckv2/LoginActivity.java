@@ -31,9 +31,6 @@ import java.net.URL;
 
 public class LoginActivity extends AppCompatActivity {
 	Button bLogin;
-	private String usertoken = "";
-
-	ProgressDialog progressDialog;
 	TextView errorText;
 
 	private SharedPreferences pref;
@@ -49,7 +46,6 @@ public class LoginActivity extends AppCompatActivity {
 		bLogin = (Button) findViewById(R.id.login);
 		TextView textView = (TextView) findViewById(R.id.textView);
 		errorText = (TextView) findViewById(R.id.errorText);
-		pref = getSharedPreferences("user", MODE_PRIVATE);
 
 		bLogin.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -163,9 +159,11 @@ public class LoginActivity extends AppCompatActivity {
 					Log.d("resultString", result);
 					JSONObject jsonObject = new JSONObject(result);
 					String userToken = jsonObject.getString("access_token");
+					String refreshToken = jsonObject.getString("refresh_token");
 					SharedPreferences.Editor editor = pref.edit();
 					editor.putString("ID", ID);
 					editor.putString("Token", userToken);
+					editor.putString("refreshToken", refreshToken);
 					editor.apply();
 					finish();
 				} catch (JSONException e) {
