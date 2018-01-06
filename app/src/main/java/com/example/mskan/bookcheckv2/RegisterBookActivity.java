@@ -360,8 +360,7 @@ public class RegisterBookActivity extends AppCompatActivity {
 
 				FileInputStream fileInputStream = new FileInputStream(filepath);
 				DataOutputStream outputStream = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()));
-
-				outputStream.writeUTF(stringBuffer.toString());
+				outputStream.write(stringBuffer.toString().getBytes("utf-8"));
 				Log.d("httpSend", stringBuffer.toString());
 
 				int maxBufferSize = 1024;
@@ -372,18 +371,17 @@ public class RegisterBookActivity extends AppCompatActivity {
 
 				while (byteRead > 0) {
 					outputStream.write(buffer, 0, bufferSize);
-					Log.d("httpSend", new String(buffer, 0, buffer.length));
 					bufferSize = Math.min(fileInputStream.available(), maxBufferSize);
 					byteRead = fileInputStream.read(buffer, 0, bufferSize);
 				}
 
 				outputStream.writeBytes("\r\n--" + boundary + "--\r\n");
-				Log.d("httpSend", delimiter);
 				outputStream.flush();
 				outputStream.close();
 				fileInputStream.close();
 
 				requestCode = connection.getResponseCode();
+
 				connection.disconnect();
 			} catch (IOException e) {
 				e.printStackTrace();

@@ -166,6 +166,10 @@ public class RFIDActivity extends AppCompatActivity {
 				case 208:
 					textView.setText("대출이 불가능한 책입니다.");
 					imageView.setImageResource(R.drawable.warning);
+					break;
+				case 403:
+					textView.setText("가입되지 않은 도서관입니다.");
+					imageView.setImageResource(R.drawable.warning);
 			}
 
 			super.onPostExecute(result);
@@ -262,6 +266,7 @@ public class RFIDActivity extends AppCompatActivity {
 	}
 
 	private void makeUUID(){
+		UUID = "";
 		if (tag != null) {
 			byte[] tagID = tag.getId();
 			for (int i = 0; i < 4; i++) {
